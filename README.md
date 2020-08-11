@@ -1,4 +1,4 @@
-<p># minishell&nbsp;</p>
+<h1> minishell </h1>
 <p>Code a simplified shell in C</p>
 <p>Group project for school 42 Paris, done with @sequoiageant&nbsp;</p>
 <p>Original git repo: https://github.com/Sequoiageant/minishell&nbsp;</p>
