@@ -1,0 +1,102 @@
+Google doc man bash:
+https://docs.google.com/document/d/1Md5AhIjY-1H6xenDQ8D-qWu5CGWgze6Q3J14B6_FQu0/edit?usp=sharing
+
+
+Sur l'execution des commandes dans un pipe:
+https://42born2code.slack.com/archives/C3QG85SG6/p1592546890255700
+https://unix.stackexchange.com/questions/37508/in-what-order-do-piped-commands-run
+
+PLAN
+
+    main()
+
+        initialisation du shell
+            message d'accueil si besoin
+            recuperer l'environnement
+        boucle while(1)
+            afficher prompt
+            lire buf
+            fonction "handle"(buf)
+
+    handle(buf)
+
+        parsing(buf) --> cf paragraphe dédié
+            allouer autant de struct s_cmd que necessaire
+        traitement(cmd)
+
+    traitement(cmd)
+
+        // trois cas:
+        // cas 0: la commande est vide (ou une suite d'espace) -> RAS, on revient au prompt
+        // cas 1: la commande appelée est une commande built-in -> executée directement dans notre programme
+        // cas 2: pas un built-in: on veut créer un nouveau process pour l'executer, via fork
+        // --> avant de faire le fork, on vérifie que la fonction n'est pas un shell built-in
+        if empty
+            return
+        if (ft_check_built_in)
+            ft_exec_built
+        else
+            ft_fork
+
+
+PARSING
+
+    SUBSTITUTION
+    to do: detecter les caracteres et faire la substitution directement
+        $var            changer en la variable d'env correspondate
+
+    SPECIAL CHARACTERS
+    Ne sont pas "lus" en tant que tel, sauf s'ils sont "quoted"
+        <>              redirection
+        |               piping
+        ;               new command
+        ' "" \          quoting
+        space           ignored
+        newline         fin de la commande
+
+    QUOTING
+    to do:  disable or not special treatment of special characters
+            disable or not parameter expansion (substitution with $)
+        
+        \               disables special treatment of special character
+                        ...with the exception of <newline>: PAS A GERER JE PENSE
+                        ......if a \<newline> pair appears, and the backslash is not itself quoted, the \<newline> is treated as a line continuation (that is, it is removed from the input stream and effectively ignored).
+                        disables parameter expansion
+
+        ''              disables special treatment of all special characters inside
+                        ...y compris du \
+                        ....y compris du \<newline>: PAS A GERER CEST SUR
+                        disables parameter expansion
+                        RQ: a single quote may not occur between single quotes, even when preceded by a backslash.
+
+        ""              disables special treatment of all special characters inside
+                        ...sauf le \ lorsqu'il precède $, ", \, [ou <newline> PAS A GERER]
+                        parameter expansion is enabled
+                        RQ: a double quote may be quoted within double quotes by preceding it with a backslash.
+        
+    MULTI COMMANDES
+    to do: alloc plusieurs cmd
+        ;               multi commandes
+                        Sont executées l'une après l'autre
+
+    REDIRECTION
+    to do: detecter les caracteres et set des flags de redirection
+    flags de redirection  = infos necessaires pour lancer les syscall "pipe" et/ou "dup"
+        >               OUTPUT = file
+                            -> il faut ouvrir le fichier (open classique) et faire le putstr dedans
+                            -> besoin du nom du fichier
+        >>              OUTPUT = file
+                            -> il faut ouvrir le fichier (open avec flag O_APPEND) et faire le putstr dedans
+                            -> besoin du nom du fichier
+        <               INPUT = file on STDIN: 
+                            -> juste a faire un dup du fd du fichier comme dans dup_test.c
+                            -> besoin juste du nom du fichier (char *)
+        
+        
+        PIPELINE
+        cmd1 | cmd2    STDOUT of cmd1 is STDIN of cmd 2
+                        cmd1 et cmd2 sont executées de manière concomitante
+                            -> pipe to connect both commands, and duplicate (dup) output fd in cmd1 to stdout and inputdf in cmd2 to stdin
+                            -> besoin de savoir si on est dans le cas [ cmd | ] ou dans le cas [ | cmd ] 
+    cf. sur les pipes et dup: https://tldp.org/LDP/lpg/node10.html#SECTION00721000000000000000
+    cf. dup_test.c et pipe_test.c
