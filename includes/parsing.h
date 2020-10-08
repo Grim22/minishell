@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bbrunet <bbrunet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/24 09:59:10 by grim              #+#    #+#             */
-/*   Updated: 2020/08/06 11:06:34 by julnolle         ###   ########.fr       */
+/*   Updated: 2020/10/08 10:46:09 by bbrunet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,23 +40,23 @@
 
 typedef struct	s_cmd
 {
-	char	*buf;
-	char	*cmd_path;
-	char	**argv;
+	char	*buf; // aide au parsing
+	char	*cmd_path; // argument de execve
+	char	**argv; // argument de execve
 	int		argc;
-	char	pad[4];
-	t_list	*redir;
-	t_list	*argv_list;
-	t_list	*flag;
-	t_list	*flag_redir;
+	char	pad[4]; // pour l'alignement en memoire
+	t_list	*redir; // liste de t_redirs, une pour chaque redirections
+	t_list	*argv_list; // utilise lors du parsing, et copie dans char **argv a la fin du parsing
+	t_list	*flag; // utilises lors du parsing. pour chaque $, un flag est set a TRUE ou FALSE selon si la substitution doit bien avoir lieu ou si elle est desactivee
+	t_list	*flag_redir; // comme le membre flag, mais pour la substitution au sein des redirections. Ex) ls > $file
 }				t_cmd;
 
 typedef struct	s_redir
 {
-	int		state;
+	int		state; // out, in, append
 	char	pad[4];
-	char	*file;
-	char	*original;
+	char	*file; // nom du fichier
+	char	*original; // nom du fichier avant substitution
 }				t_redir;
 
 /*

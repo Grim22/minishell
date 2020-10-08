@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   m_executable_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bbrunet <bbrunet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 09:15:15 by grim              #+#    #+#             */
-/*   Updated: 2020/08/06 11:11:26 by julnolle         ###   ########.fr       */
+/*   Updated: 2020/10/08 11:25:46 by bbrunet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	close_pipes(int *fd[2], int num)
 
 int		dup_close_pipes(int *fd[2], int fd_in, int fd_out, int num)
 {
+	// on duplique fd_out / fd_in vers STDOUT / STDIN puis on ferme fd_out / fd_in. On ferme ensuite tous les autres fd
 	if (fd_out)
 	{
 		dup2(fd_out, STDOUT_FILENO);
