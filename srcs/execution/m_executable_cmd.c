@@ -6,7 +6,7 @@
 /*   By: bbrunet <bbrunet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/02 18:51:03 by grim              #+#    #+#             */
-/*   Updated: 2020/10/08 11:42:04 by bbrunet          ###   ########.fr       */
+/*   Updated: 2020/10/14 18:05:42 by bbrunet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,13 +104,13 @@ int			ft_executable_cmd(t_list *cmd_list, t_list *env)
 	while (cmd_list->next)
 	{
 		if (fork() == 0 && dup_close_pipes(fd, fd[i][PIPE_READ],
-			fd[i + 1][PIPE_WRITE], num_pipe))
+			fd[i + 1][PIPE_WRITE], num_pipe) && close(fd[i][PIPE_WRITE]))
 			ft_builtin_or_bin(cmd_list, &env, env_tab);
 		cmd_list = cmd_list->next;
 		i++;
 	}
 	if ((g_glob.pid = fork()) == 0
-		&& dup_close_pipes(fd, fd[i][PIPE_READ], 0, num_pipe))
+		&& dup_close_pipes(fd, fd[i][PIPE_READ], 0, num_pipe) && close(fd[i][PIPE_WRITE]))
 		ft_builtin_or_bin(cmd_list, &env, env_tab);
 	// on attend que toutes les commandes aient return (autant de wait que de commandes).
 	// on ne recupere que la valeur de retour de la derniere commande (celle dont le pid est stockee dans g_glob.pid)

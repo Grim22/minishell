@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_in.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bbrunet <bbrunet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/23 12:15:06 by grim              #+#    #+#             */
-/*   Updated: 2020/08/06 09:26:09 by julnolle         ###   ########.fr       */
+/*   Updated: 2020/10/14 18:00:48 by bbrunet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,11 @@ int		ft_built_in(t_cmd *cmd, int index, t_list **env)
 		ms_unset, ms_env};
 
 	ret = FAILURE;
+	// on "sauvegarde" STDOUT et STDIN pour pouvoir les restaurer plus tard
+	// pour cela on cree une copie de STDOUT et une de STDIN
 	new_stdout = dup(STDOUT_FILENO);
 	new_stdin = dup(STDIN_FILENO);
+	// on fait les redirections et on execute la commande
 	if (ft_redirs(cmd) != FAILURE)
 	{
 		ret = built_func[index](cmd->argc, cmd->argv, env);
@@ -31,6 +34,7 @@ int		ft_built_in(t_cmd *cmd, int index, t_list **env)
 		else
 			g_glob.ret = 0;
 	}
+	// on restaure STDIN et STDOUT dans leur fd d'origine
 	dup2(new_stdout, STDOUT_FILENO);
 	dup2(new_stdin, STDIN_FILENO);
 	close(new_stdout);

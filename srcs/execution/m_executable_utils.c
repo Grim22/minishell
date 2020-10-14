@@ -6,7 +6,7 @@
 /*   By: bbrunet <bbrunet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 09:15:15 by grim              #+#    #+#             */
-/*   Updated: 2020/10/08 11:25:46 by bbrunet          ###   ########.fr       */
+/*   Updated: 2020/10/14 18:04:54 by bbrunet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,14 @@ int		dup_close_pipes(int *fd[2], int fd_in, int fd_out, int num)
 	if (fd_out)
 	{
 		dup2(fd_out, STDOUT_FILENO);
-		close(fd_out);
+		//close(fd_in);
 	}
 	if (fd_in)
 	{
 		dup2(fd_in, STDIN_FILENO);
-		close(fd_in);
+		//close(fd_out);
 	}
-	close_pipes(fd, num);
+	// close_pipes(fd, num);
 	return (TRUE);
 }
 
